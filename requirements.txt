@@ -9,3 +9,4 @@ pillow
 clip-anytorch
 psycopg2-binary
 numpy
+python-multipart
