@@ -1,0 +1,11 @@
+fastapi
+uvicorn
+torch
+torchvision
+ftfy
+regex
+tqdm
+pillow
+clip-anytorch
+psycopg2-binary
+numpy
