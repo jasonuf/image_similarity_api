@@ -6,6 +6,8 @@ import torch
 import clip
 import psycopg2
 from io import BytesIO
+from fastapi.middleware.cors import CORSMiddleware
+
 
 # ------------------ CONFIG ------------------
 
@@ -21,6 +23,16 @@ TOP_K_DEFAULT = int(os.getenv("TOP_K_DEFAULT", 5))
 app = FastAPI(
     title="Art Similarity API",
     description="Find visually and semantically similar artworks using CLIP + pgvector.",
+)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],      # allow all origins
+    allow_methods=["*"],      # allow all HTTP methods
+    allow_headers=["*"],      # allow all headers
+    allow_credentials=False,  # keep False if using "*" for origins
+    expose_headers=[],        # add names if you need to read custom headers in JS
+    max_age=600,              # cache preflight for 10 minutes
 )
 
 # Load CLIP model once on startup
