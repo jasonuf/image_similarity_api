@@ -44,11 +44,10 @@ def get_image_embedding(file: UploadFile):
 
 
 def hybrid_search(vector, alpha=ALPHA_DEFAULT, top_k=TOP_K_DEFAULT):
-    """Search top_k matches combining image+text embedding similarity."""
     vector_str = "[" + ",".join(str(x) for x in vector) + "]"
     with conn.cursor() as cur:
         cur.execute(f"""
-            SELECT artist, title, year, style, filepath,
+            SELECT artist, title, year, style, filepath, cdn_url,
                    {alpha} * (1 - (image_embedding <-> '{vector_str}'::vector)) +
                    (1 - {alpha}) * (1 - (text_embedding <-> '{vector_str}'::vector)) AS hybrid_score
             FROM art_embeddings
@@ -59,7 +58,7 @@ def hybrid_search(vector, alpha=ALPHA_DEFAULT, top_k=TOP_K_DEFAULT):
 
     results = []
     for rank, row in enumerate(rows, start=1):
-        artist, title, year, style, filepath, score = row
+        artist, title, year, style, filepath, cdn_url, score = row
         results.append({
             "rank": rank,
             "artist": artist,
@@ -67,6 +66,7 @@ def hybrid_search(vector, alpha=ALPHA_DEFAULT, top_k=TOP_K_DEFAULT):
             "year": year,
             "style": style,
             "filepath": filepath,
+            "cdn_url": cdn_url,
             "score": float(score),
         })
     return results
